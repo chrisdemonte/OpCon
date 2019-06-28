@@ -724,10 +724,11 @@ public class Runner extends Application {
 		
 		Pane root1 = new Pane();
 		borderpane = new BorderPane();
-		
+		Label bg = new Label();
+		bg.setGraphic(bgImage);
 		borderpane.setMaxSize(width, height);
 		borderpane.setMinSize(width, height);
-		root1.getChildren().addAll( borderpane);
+		root1.getChildren().addAll(bg, borderpane);
 		
 		centerContainer = new VBox(2);
 		centerContainer.setAlignment(Pos.CENTER);
@@ -916,11 +917,9 @@ public Pane tutorialTrialScene (Stage mainStage) {
 	
 		Pane root1 = new Pane();
 		borderpane = new BorderPane();
-		Label bg = new Label();
-		bg.setGraphic(bgImage);
 		borderpane.setMaxSize(width, height);
 		borderpane.setMinSize(width, height * 0.8);
-		root1.getChildren().addAll(bg, borderpane);
+		root1.getChildren().addAll( borderpane);
 		
 		centerContainer = new VBox(2);
 		centerContainer.setAlignment(Pos.CENTER);

@@ -48,7 +48,7 @@ public class Experiment {
 				+ "You may skip the tutorial at anytime by pressing the \"Next\" button. ";
 		
 		instructions[4] = ("\tAt the end of the test, you will be asked to make a judgment about how much control your pressing the button had over whether the light came on. "
-				+ "\n\t\"Total control\" means that the light switching is completely determined by your choice of response- either pressing or not pressing the button. \n" + 
+				+ "\"Total control\" means that the light switching is completely determined by your choice of response- either pressing or not pressing the button. \n" + 
 				"\t\"No control\" means that your button pressing had no influence at all on whether the light was switched on or not."
 				+ " In other words, the light switching on had nothing to do with what you did or didn't do. \n" + 
 				"\t\"Partial control\" means that you pressing or not pressing the button did influence the light switching on, but not completely."
