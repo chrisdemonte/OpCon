@@ -42,6 +42,8 @@ public class Runner extends Application {
 	public int instructionsCounter = 0;
 	public int gameCounter = 0;
 	public int trialCounter = 0;
+	public int tutorialGames = 2;
+	public int tutotialTrials = 4;
 	public Random rand = new Random();
 	
 	public int width = (int) Screen.getPrimary().getVisualBounds().getWidth();
@@ -69,9 +71,11 @@ public class Runner extends Application {
 	public ImageView bgImage;
 	
 	public int sceneMode = 0;
-	public int resultDuration = 2;
+	public int resultDuration = 4;
 	public int temp = 0;
+	public int temp2 = 0;
 	
+	public Timeline timer2 = new Timeline();
 	
 
 	public void start(Stage primaryStage) throws Exception {
@@ -540,10 +544,7 @@ public class Runner extends Application {
 		lightContainer.setAlignment(Pos.CENTER);
 		lightContainer.setMaxHeight(height/2);
 		lightContainer.setMaxWidth(width);
-		Label pic = new Label();
-		pic.setPadding(new Insets(height/10, 0 , 0 , 0));
-
-		lightContainer.getChildren().add(pic);
+	
 		container.getChildren().addAll(textContainer, lightContainer);
 		//01************** leftElements holds all the elements on the left (labels)****************************01
 		
@@ -596,21 +597,34 @@ public class Runner extends Application {
 				instructionsLabel.setText(ex.getInstructions()[instructionsCounter]);
 				forward.setVisible(false);
 				previous.setVisible(false);
-				pic.setGraphic(bulbOff);
 				carryOn.setStyle(null);
 				carryOn.setVisible(true);
+				lightContainer.getChildren().clear();
+				gameCounter = 0;
+				trialCounter = 0;
+				sceneMode = 0;
+				timer2.stop();
 				
 			}		
 			else if (instructionsCounter == 3) {
 				instructionsCounter++;
 				instructionsLabel.setText(ex.getInstructions()[instructionsCounter]);
-				pic.setGraphic(null);
 				carryOn.setVisible(false);
+				lightContainer.getChildren().clear();
+				timer2.stop();
+				gameCounter = 0;
+				trialCounter = 0;
+				sceneMode = 0;
 				forward.setText("Start Experiment");
 				
 			}
 			else if (instructionsCounter == 4) {
 				root.getChildren().clear();
+				finalButton.setOnAction(action->{
+					ex.getGameList().get(gameCounter).setSliderValue(slider.getValue());
+					ex.finalCalc();
+					saveToFile();
+				});
 				root.getChildren().add(trialScene(mainStage));
 			}
 		});
@@ -632,14 +646,23 @@ public class Runner extends Application {
 				instructionsCounter--;
 				instructionsLabel.setText(ex.getInstructions()[instructionsCounter]);
 				carryOn.setVisible(false);
-				pic.setGraphic(null);
+				lightContainer.getChildren().clear();
+				gameCounter = 0;
+				trialCounter = 0;
+				sceneMode = 0;
+				timer2.stop();
+				
 				
 			}
 			else if (instructionsCounter == 4) {
 				instructionsCounter--;
 				instructionsLabel.setText(ex.getInstructions()[instructionsCounter]);
 				forward.setText("Forward");
-				pic.setGraphic(bulbOff);
+				gameCounter = 0;
+				trialCounter = 0;
+				sceneMode = 0;
+				timer2.stop();
+				lightContainer.getChildren().clear();
 				forward.setVisible(false);
 				previous.setVisible(false);
 				carryOn.setStyle(null);
@@ -651,10 +674,10 @@ public class Runner extends Application {
 		carryOn.setMinSize(width/6, elementHeights);
 		carryOn.setVisible(false);
 		carryOn.setOnAction(e->{
-			pic.setGraphic(bulbOn);
+			lightContainer.getChildren().add(tutorialTrialScene(mainStage));
 			forward.setVisible(true);
 			previous.setVisible(true);
-			carryOn.setStyle("-fx-background-color: GREEN; -fx-text-fill: WHITE");
+			carryOn.setVisible(false);
 		});
 		mainStage.heightProperty().addListener(e->{
 			instructionsLabel.setFont(Font.font("Verdana", normalFont));
@@ -701,11 +724,10 @@ public class Runner extends Application {
 		
 		Pane root1 = new Pane();
 		borderpane = new BorderPane();
-		Label bg = new Label();
-		bg.setGraphic(bgImage);
+		
 		borderpane.setMaxSize(width, height);
 		borderpane.setMinSize(width, height);
-		root1.getChildren().addAll(bg, borderpane);
+		root1.getChildren().addAll( borderpane);
 		
 		centerContainer = new VBox(2);
 		centerContainer.setAlignment(Pos.CENTER);
@@ -786,6 +808,7 @@ public class Runner extends Application {
 		sliderLabelContainer.setAlignment(Pos.CENTER);
 		sliderLabelContainer.setSpacing(width * .291);
 		sliderLabelContainer.setMaxWidth(width * .875);
+		sliderLabelContainer.getChildren().clear();
 		sliderLabelContainer.getChildren().addAll(label1, label2, label3);
 		bottomButton = new Button("Click");
 		bottomButton.setFont(Font.font("Verdana", normalFont));
@@ -887,6 +910,176 @@ public class Runner extends Application {
 			e.printStackTrace();
 		}
 	}
+	
+public Pane tutorialTrialScene (Stage mainStage) {
+		
+	
+		Pane root1 = new Pane();
+		borderpane = new BorderPane();
+		Label bg = new Label();
+		bg.setGraphic(bgImage);
+		borderpane.setMaxSize(width, height);
+		borderpane.setMinSize(width, height * 0.8);
+		root1.getChildren().addAll(bg, borderpane);
+		
+		centerContainer = new VBox(2);
+		centerContainer.setAlignment(Pos.CENTER);
+		centerContainer.setMaxWidth(width);
+		centerLabel = new Label("7");
+		centerLabel.setFont(Font.font("Verdana", FontWeight.BOLD, normalFont*2));
+		centerContainer.getChildren().add(centerLabel);
+		
+		trialCounterLabel = new Label ("Trial : " + (trialCounter + 1));
+		trialCounterLabel.setFont(Font.font("Verdana", normalFont));
+		borderpane.setTop(trialCounterLabel);
+		
+		bottomContainer = new HBox(2);
+		bottomContainer.setAlignment(Pos.CENTER);
+		bottomContainer.setPadding(new Insets (0.0, 0.0, height/20, 0.0));
+		
+		slider = new Slider(-100.0, 100.0, 0.0);
+		slider.setMaxWidth(mainStage.getWidth() * .875);
+		slider.setMinHeight(20.0);
+		
+		Label label1 = new Label("Total Prevent");
+		Tooltip tooltip1 = new Tooltip();
+		tooltip1.setText("Each button press prevents the light from coming on, the light comes on consistently without pressing the button.");
+		label1.setTooltip(tooltip1);
+		label1.setAlignment(Pos.BASELINE_LEFT);
+		Label label2 = new Label("No Control");
+		Tooltip tooltip2 = new Tooltip();
+		tooltip2.setText("Pressing or not pressing the button has no impact on whether the light comes on or not.");
+		label2.setTooltip(tooltip2);
+		label2.setAlignment(Pos.BASELINE_CENTER);
+		Label label3 = new Label("Total Control");
+		Tooltip tooltip3 = new Tooltip();
+		tooltip3.setText("The light comes on every time the button is pressed and never comes on if the button is not pressed.");
+		label3.setTooltip(tooltip3);
+		label3.setAlignment(Pos.BASELINE_RIGHT);
+		label1.setFont(Font.font("Verdana", normalFont));
+		label1.minWidth(width * .291);
+		label1.setMaxWidth(width * .291);
+		label2.setFont(Font.font("Verdana", normalFont));
+		label2.minWidth(width * .291);
+		label2.setMaxWidth(width * .291);
+		label3.setFont(Font.font("Verdana", normalFont));
+		label3.minWidth(width * .291);
+		label3.setMaxWidth(width * .291);
+		
+		finalButton = new Button ("End Experiment");
+		finalButton.setFont(Font.font("Verdana", normalFont));
+		finalButton.setMinSize(width/6, elementHeights);
+		finalButton.setOnAction(action->{
+			
+		});
+		nextGameButton = new Button("Next Game");
+		nextGameButton.setFont(Font.font("Verdana", normalFont));
+		nextGameButton.setMinSize(width/6, elementHeights);
+		nextGameButton.setOnAction(action->{
+			
+			centerContainer.getChildren().clear();
+			centerContainer.getChildren().add(centerLabel);
+			centerLabel.setText("");
+			
+			gameCounter++;
+			trialCounter = 0;
+			sceneMode = 0;
+			
+			trialCounterLabel.setText("Trial : " + (trialCounter + 1));
+			centerLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 45));
+			centerLabel.setText("7");
+			
+			bottomContainer.getChildren().clear();
+			bottomContainer.getChildren().add(bottomButton);
+			
+			runTimer2(7, mainStage);
+			
+		});
+		sliderLabelContainer.setAlignment(Pos.CENTER);
+		sliderLabelContainer.setSpacing(width * .291);
+		sliderLabelContainer.setMaxWidth(width * .875);
+		sliderLabelContainer.getChildren().clear();
+		sliderLabelContainer.getChildren().addAll(label1, label2, label3);
+		bottomButton = new Button("Click");
+		bottomButton.setFont(Font.font("Verdana", normalFont));
+		bottomButton.setMinSize(width/6, elementHeights);
+		bottomButton.setOnAction(e->{
+		
+			bottomButton.setStyle("-fx-background-color: GREEN; -fx-text-fill: WHITE");
+		});
+		bottomContainer.getChildren().add(bottomButton);
+		
+		borderpane.setCenter(centerContainer);
+		borderpane.setBottom(bottomContainer);
+		
+		mainStage.heightProperty().addListener(e->{
+			height = (int) mainStage.getHeight();
+			width = (int) mainStage.getWidth();
+			normalFont = (int) (Math.sqrt(mainStage.getWidth()/10.0) + Math.sqrt(mainStage.getHeight()/10.0));
+			elementHeights = (int) mainStage.getHeight() / 20;
+			borderpane.setMaxSize(width, height);
+			borderpane.setMinSize(width, height);
+			centerLabel.setFont(Font.font("Verdana", FontWeight.BOLD, normalFont * 2));
+			bottomButton.setFont(Font.font("Verdana", normalFont));
+			bottomButton.setMinSize(width/6, elementHeights);
+			sliderLabelContainer.setMaxWidth(width * .875);
+			sliderLabelContainer.setSpacing(width * .291);
+			slider.setMaxWidth(mainStage.getWidth() * .875);
+			slider.setMinHeight(20.0);
+			centerContainer.setMaxWidth(width);
+			bottomContainer.setPadding(new Insets (0.0, 0.0, height/20, 0.0));
+			label1.setFont(Font.font("Verdana", normalFont));
+			label1.minWidth(width * .291);
+			label1.setMaxWidth(width * .291);
+			label2.setFont(Font.font("Verdana", normalFont));
+			label2.minWidth(width * .291);
+			label2.setMaxWidth(width * .291);
+			label3.setFont(Font.font("Verdana", normalFont));
+			label3.minWidth(width * .291);
+			label3.setMaxWidth(width * .291);
+			finalButton.setFont(Font.font("Verdana", normalFont));
+			finalButton.setMinSize(width/6, elementHeights);
+			nextGameButton.setFont(Font.font("Verdana", normalFont));
+			nextGameButton.setMinSize(width/6, elementHeights);
+
+		});
+		mainStage.widthProperty().addListener(e->{
+
+			height = (int) mainStage.getHeight();
+			width = (int) mainStage.getWidth();
+			normalFont = (int) (Math.sqrt(mainStage.getWidth()/10.0) + Math.sqrt(mainStage.getHeight()/10.0));
+			borderpane.setMaxSize(width, height);
+			borderpane.setMinSize(width, height);
+			centerLabel.setFont(Font.font("Verdana", FontWeight.BOLD, normalFont * 2));
+			bottomButton.setFont(Font.font("Verdana", normalFont));
+			bottomButton.setMinSize(width/6, elementHeights);
+			slider.setMaxWidth(mainStage.getWidth() * .875);
+			slider.setMinHeight(20.0);
+			sliderLabelContainer.setMaxWidth(width * .875);
+			sliderLabelContainer.setSpacing(width * .291);
+			centerContainer.setMaxWidth(width);
+			bottomContainer.setPadding(new Insets (0.0, 0.0, height/20, 0.0));
+			label1.setFont(Font.font("Verdana", normalFont));
+			label1.minWidth(width * .291);
+			label1.setMaxWidth(width * .291);
+			label2.setFont(Font.font("Verdana", normalFont));
+			label2.minWidth(width * .291);
+			label2.setMaxWidth(width * .291);
+			label3.setFont(Font.font("Verdana", normalFont));
+			label3.minWidth(width * .291);
+			label3.setMaxWidth(width * .291);
+			finalButton.setFont(Font.font("Verdana", normalFont));
+			finalButton.setMinSize(width/6, elementHeights);
+			nextGameButton.setFont(Font.font("Verdana", normalFont));
+			nextGameButton.setMinSize(width/6, elementHeights);
+
+		});
+
+		
+		runTimer2(7, mainStage);
+		
+		return root1;
+	}
 
 	public void runTimer (int duration, Stage mainStage) {
 		temp = duration;
@@ -983,6 +1176,90 @@ public class Runner extends Application {
 					}
 			}));
 		timer.playFromStart();
+	}
+	public void runTimer2 (int duration, Stage mainStage) {
+		temp2 = duration;
+		timer2 = new Timeline();
+		timer2.setCycleCount(temp2);
+		timer2.getKeyFrames().add(
+				new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+					public void handle(ActionEvent e) {
+						temp2--;
+						if (sceneMode == 0) {
+							centerLabel.setText("" + temp2);
+							trialCounterLabel.setText("Trial : " + (trialCounter + 1));
+						}
+
+						if (sceneMode == 2) {
+							centerLabel.setText("The next trial will start in " + temp2 + " seconds.");
+						}
+						
+						if (temp2 <= 0) {
+							timer2.stop();	
+						
+							if (sceneMode ==0) {
+								
+								sceneMode = 1;
+								bottomContainer.getChildren().clear();
+								bottomButton.setStyle(null);
+								centerLabel.setText("");
+								
+								int random = rand.nextInt(2);
+								if (random == 1) {
+									centerLabel.setGraphic(bulbOn);
+								}
+								else {
+									centerLabel.setGraphic(bulbOff);
+								}
+								
+								
+								runTimer2(resultDuration, mainStage);
+								
+							}
+							else if (sceneMode == 1) {
+								
+								sceneMode = 2;
+								centerLabel.setGraphic(null);
+								if (trialCounter < tutotialTrials - 1 ) {
+									
+									centerLabel.setText("The next trial will start in " + 7 + " seconds.");
+									centerLabel.setFont(Font.font("Verdana", normalFont));
+									
+									
+									runTimer2(7, mainStage);
+								}
+								else if (trialCounter >= tutotialTrials - 1 && gameCounter < tutorialGames){
+									
+									trialCounterLabel.setText("");
+									centerLabel.setText("");
+									centerContainer.getChildren().addAll(sliderLabelContainer, slider);
+									trialCounter = 0;
+								
+									bottomContainer.getChildren().add(nextGameButton);
+								}
+								else {
+									trialCounterLabel.setText("");
+									centerLabel.setText("");
+									centerContainer.getChildren().addAll(sliderLabelContainer, slider);			
+									bottomContainer.getChildren().clear();
+									bottomContainer.getChildren().add(finalButton);
+								}
+							}
+							else if (sceneMode == 2) {
+								
+								sceneMode = 0;
+								centerLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 45));
+								centerLabel.setText("7");
+								bottomContainer.getChildren().clear();
+								bottomContainer.getChildren().add(bottomButton);
+								trialCounter++;
+								runTimer2(7, mainStage);
+							}
+						}
+
+					}
+			}));
+		timer2.playFromStart();
 	}
 
 	public static void main(String[] args) {
