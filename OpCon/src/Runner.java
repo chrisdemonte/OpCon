@@ -486,7 +486,6 @@ public class Runner extends Application {
 			leftElements.setPadding(new Insets(height * .25 - height/275, 0.0, 0.0, 0.0));
 			rightElements.setMinSize(mainStage.getWidth() * .6, mainStage.getHeight() * .5);
 			rightElements.setPadding(new Insets(height * .25, 0.0, 0.0, width* .01));
-			normalFont = (int) (Math.sqrt(mainStage.getWidth()/10.0) + Math.sqrt(mainStage.getHeight()/10.0));
 			gameEntryLabel.setFont(Font.font("Verdana",FontWeight.BOLD, normalFont));
 			numTrialsLabel.setMaxWidth(mainStage.getWidth() * .3);
 			numTrialsLabel.setFont(Font.font("Verdana", normalFont));
@@ -680,10 +679,9 @@ public class Runner extends Application {
 			carryOn.setVisible(false);
 		});
 		mainStage.heightProperty().addListener(e->{
-			instructionsLabel.setFont(Font.font("Verdana", normalFont));
+	
 			height = (int) mainStage.getHeight();
 			width = (int) mainStage.getWidth();
-			normalFont = (int) (Math.sqrt(mainStage.getWidth()/10.0) + Math.sqrt(mainStage.getHeight()/10.0));
 			elementHeights = (int) mainStage.getHeight() / 20;
 			forward.setMinSize( mainStage.getWidth() * .2, elementHeights);
 			previous.setMinSize( mainStage.getWidth() * .2, elementHeights);
@@ -699,10 +697,8 @@ public class Runner extends Application {
 			lightContainer.setMaxWidth(width);
 		});
 		mainStage.widthProperty().addListener(e->{
-			instructionsLabel.setFont(Font.font("Verdana", normalFont));
 			height = (int) mainStage.getHeight();
 			width = (int) mainStage.getWidth();
-			normalFont = (int) (Math.sqrt(mainStage.getWidth()/10.0) + Math.sqrt(mainStage.getHeight()/10.0));
 			forward.setMinSize( mainStage.getWidth() * .2, elementHeights);
 			previous.setMinSize( mainStage.getWidth() * .2, elementHeights);
 			carryOn.setMinSize( mainStage.getWidth() * .2, elementHeights);
@@ -918,7 +914,7 @@ public Pane tutorialTrialScene (Stage mainStage) {
 		Pane root1 = new Pane();
 		borderpane = new BorderPane();
 		borderpane.setMaxSize(width, height);
-		borderpane.setMinSize(width, height * 0.8);
+		borderpane.setMinSize(width, height * 0.6);
 		root1.getChildren().addAll( borderpane);
 		
 		centerContainer = new VBox(2);
